@@ -1,0 +1,36 @@
+{% extends "estoria_app/base.html" %}
+
+{% block content %}
+
+    <h1>Baking</h1>
+
+    <h2>Bake a Range of Chapters</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p class="error">{{ message }}</p>
+        <p class="error">{{ form.non_field_errors }}</p>
+        <p class="error">{{ form.start_chapter.errors }}</p>
+        <p>{{ form.start_chapter.label_tag }} {{ form.start_chapter }}</p>
+        <p class="error">{{ form.stop_chapter.errors }}</p>
+        <p>{{ form.stop_chapter.label_tag }} {{ form.stop_chapter }}</p>
+        <p><input name="range" type="submit" value="Bake"/></p>
+    </form>
+
+    <h2>Edition Index</h2>
+        {% for chapter, verses in data.items %}
+            <p>
+                <strong>{{ chapter }}</strong> | (<a href="{{ location }}chapter/?chapter={{ chapter }}">whole chapter</a>)
+                <form method="post">
+                    {% csrf_token %}
+                    <input name="chapter" type="hidden" value="{{ chapter }}"/>
+                    <input name="one" type="submit" value="Bake"/>
+                </form>
+            </p>
+            <ul>
+                {% for verse in verses %}
+                    <li>{{ verse }} | <a href="{{ location }}?context=D{{ chapter }}S{{ verse }}">Critical Edition</a> </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+
+{% endblock content %}

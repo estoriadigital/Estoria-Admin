@@ -1,0 +1,14 @@
+{% extends "estoria_app/base.html" %}
+
+{% block content %}
+
+    <h1>Critical Edition</h1>
+    <p class="error">{{ message }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <p><input name="rebuildfirst" type="submit" value="Rebuild First Part"/></p>
+        <p><a href="baking">Bake files</a></p>
+        <p><input name="rebuildlast" type="submit" value="Rebuild Last Part"/></p>
+    </form>
+
+{% endblock content %}

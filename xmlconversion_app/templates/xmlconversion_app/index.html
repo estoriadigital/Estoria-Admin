@@ -1,0 +1,17 @@
+{% extends "xmlconversion_app/base.html" %}
+
+{% block content %}
+
+    <h1>XML to JSON Conversion</h1>
+    <p>Please upload your XML file using the form below.</p>
+    <p>Once uploaded the server will check to see if the file is valid XML and, if it is, split the chapters to separate JSON files.</p>
+    <p>The output will then be available as a downloadable zip file, which will contain all you need to view the chapters on your own computer.</p>
+    <p class="error">{{ message }}</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p class="error">{{ form.non_field_errors }}</p>
+        <p class="error">{{ form.xmlfile.errors }}</p>
+        <p>{{ form.xmlfile.label_tag }} {{ form.xmlfile }} <input name="upload" type="submit" value="Upload"/></p>
+    </form>
+
+{% endblock content %}

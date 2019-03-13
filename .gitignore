@@ -1,0 +1,6 @@
+__pycache__
+.coverage
+db.sqlite3
+djangoproject/settings.py
+geckodriver.log
+htmlcov

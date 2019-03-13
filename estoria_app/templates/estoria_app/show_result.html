@@ -1,0 +1,48 @@
+{% extends "estoria_app/base.html" %}
+
+{% block content %}
+
+    <h1>{{ title }}</h1>
+
+    <p id="user-count">Checking the server for the task.</p>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        var poll_xhr;
+        var stop = 0;
+        (function(){
+            var poll = function(){
+                var task_id = "{{ task_id }}";
+                console.log(task_id);
+                poll_xhr = $.ajax({
+                    url:'../poll_state',
+                    type: 'POST',
+                    data: {
+                        task_id: task_id,
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                    },
+                    success: function(result) {
+                        console.log(result);
+                        if (result.state === "SUCCESS" || result.state === "FAILURE") {
+                            stop = 1;
+                            if (result.state === "SUCCESS") {
+                                document.getElementById("user-count").innerHTML = "Your task ({{ task_id }}) completed.";
+                            } else {
+                                document.getElementById("user-count").textContent = "Your task ({{ task_id }}) failed.";
+                            }
+                        } else {
+                            document.getElementById("user-count").textContent = "Your task ({{ task_id }}) is running.";
+                        }
+                    }
+                });
+            };
+            var refreshIntervalId = setInterval(function() {
+                    poll();
+                if(stop == 1){
+                    clearInterval(refreshIntervalId);
+                }
+            },500);
+        })();
+    </script>
+
+{% endblock content %}

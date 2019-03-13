@@ -1,0 +1,24 @@
+{% extends "estoria_app/base.html" %}
+
+{% block content %}
+
+    <h1>Transcriptions</h1>
+    <p>{{ message }}</p>
+    <p>Upload replacement transcription files here (E1.xml, E2.xml, Q.xml, Ss.xml, T.xml, or Y.xml).</p>
+    <p>Once you have successfully uploaded all the files you wish to replace then click 'Rebuild' to start off generation of the new pages.</p>
+
+    <h2>Upload file</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p class="error">{{ form.non_field_errors }}</p>
+        <p class="error">{{ form.xmlfile.errors }}</p>
+        <p>{{ form.xmlfile.label_tag }} {{ form.xmlfile }} <input name="upload" type="submit" value="Upload"/></p>
+    </form>
+
+    <h2>Rebuild</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p><input name="rebuild" type="submit" value="Rebuild"/></p>
+    </form>
+
+{% endblock content %}
