@@ -25,3 +25,6 @@ To run the tests and check code coverage, with html code coverage output:
   * coverage run --source=. manage.py test -v 2; coverage html
 
 The Django project was written by Simon Branford, with code review by Andrew Edmondson - both of [The Research Software Group, University of Birmingham](https://www.birmingham.ac.uk/bear-software). Some parts of [the resources in the xmlconversion_app](xmlconversion_app/resources) were  written by Zeth Green and Cat Smith. Licensing information for the original code is in [license](license).
+
+
+To reference the code in Estoria Admin, please use the following: [![DOI](https://zenodo.org/badge/175478994.svg)](https://zenodo.org/badge/latestdoi/175478994)
