@@ -64,12 +64,11 @@ def xmlconversion(xml_filename, tempdir):
         dirname = xml_filename.replace('.xml', '')
         shutil.copytree(os.path.join(tempdir, 'edition/transcription/', dirname), os.path.join(tempdir, 'output/json'))
 
-
-        # shutil.copytree(os.path.join(settings.ESTORIA_LOCATION, 'edition/dist/fonts'),
-        #                 os.path.join(tempdir, 'output/static/fonts'))
         logger.debug(os.listdir(os.path.join(tempdir, 'output/static/')))
-        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/'))
-        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/'))
+
+        shutil.copytree(os.path.join(settings.RESOURCES_LOCATION, 'deps'), os.path.join(tempdir, 'output/static/deps'))
+        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/static/'))
+        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/static/'))
 
         menu = json.loads(open(os.path.join(tempdir, 'edition/static/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
         index_string = open(os.path.join(settings.RESOURCES_LOCATION, 'index.html')).read()
@@ -86,21 +85,11 @@ def xmlconversion(xml_filename, tempdir):
             expanded_list.append(data['html'])
             expanded_list.append('</div>')
 
-
-
+        index_string = index_string.replace('%SGLM%', dirname)
         index_string = index_string.replace('%ABBRVTD%', ''.join(abbreviated_list))
         index_string = index_string.replace('%EXPNDD%', ''.join(expanded_list))
         with open(os.path.join(tempdir, 'output/index.html'), 'w') as outfile:
             outfile.write(index_string)
-
-
-        # logger.debug('{}: move edition/static/data/menu_data.js to '
-        #              'output/static/js/data_menu.js and edit the second line'.format(current_task.request.id))
-        # shutil.copy(os.path.join(tempdir, 'edition/static/data/menu_data.js'), os.path.join(tempdir, 'output/static/js/'))
-        #
-        # # This replaces the second line of the file with a standard line
-        # # This means that the javascript in estoria.js will know how to access the menu data
-        # replace_line(os.path.join(tempdir, 'output/static/js/menu_data.js'), 2, '    "json": [')
 
         logger.debug('{}: zip up the result and copy to output location'.format(current_task.request.id))
         zipname = re.sub('^' + tempfile.gettempdir() + '/', '', tempdir)
