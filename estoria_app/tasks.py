@@ -22,13 +22,13 @@ def estoria_xml():
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
 
     logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_paginated_json.py'], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_paginated_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
 
     logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'add_html_to_paginated_json.py'], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'add_html_to_paginated_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
 
     logger.debug('{}: run make_chapter_index_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_chapter_index_json.py'], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_chapter_index_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
@@ -43,7 +43,7 @@ def reader_xml():
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
 
     logger.debug('{}: run make_reader.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_reader.py'], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_reader.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
 
     logger.info('{}: complete'.format(current_task.request.id))
 

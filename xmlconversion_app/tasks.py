@@ -38,65 +38,65 @@ def xmlconversion(xml_filename, tempdir):
     logger.debug('{}: Output location: {}'.format(current_task.request.id, settings.OUTPUT_LOCATION))
     logger.debug('{}: Temporary directory: {}'.format(current_task.request.id, tempdir))
 
-    try:
-        logger.debug('{}: create directory structure'.format(current_task.request.id))
-        os.makedirs(os.path.join(tempdir, 'transcriptions/manuscripts'))
-        os.makedirs(os.path.join(tempdir, 'edition/static/data'))
-        os.makedirs(os.path.join(tempdir, 'edition/scripts'))
-        os.makedirs(os.path.join(tempdir, 'output/static'))
+    # try:
+    logger.debug('{}: create directory structure'.format(current_task.request.id))
+    os.makedirs(os.path.join(tempdir, 'transcriptions/manuscripts'))
+    os.makedirs(os.path.join(tempdir, 'edition/static/data'))
+    os.makedirs(os.path.join(tempdir, 'edition/scripts'))
+    os.makedirs(os.path.join(tempdir, 'output/static'))
 
-        logger.debug('{}: add XML'.format(current_task.request.id))
-        shutil.move(os.path.join(tempdir, xml_filename), os.path.join(tempdir, 'transcriptions/manuscripts/'))
+    logger.debug('{}: add XML'.format(current_task.request.id))
+    shutil.move(os.path.join(tempdir, xml_filename), os.path.join(tempdir, 'transcriptions/manuscripts/'))
 
-        logger.debug('{}: copy over scripts'.format(current_task.request.id))
-        shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'make_paginated_json.py'),
-                    os.path.join(tempdir, 'edition/scripts/'))
-        shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'add_html_to_paginated_json.py'),
-                    os.path.join(tempdir, 'edition/scripts/'))
+    logger.debug('{}: copy over scripts'.format(current_task.request.id))
+    shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'make_paginated_json.py'),
+                os.path.join(tempdir, 'edition/scripts/'))
+    shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'add_html_to_paginated_json.py'),
+                os.path.join(tempdir, 'edition/scripts/'))
 
-        logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_output([ 'python3', 'make_paginated_json.py'], cwd=os.path.join(tempdir, 'edition/scripts/'), stderr=subprocess.STDOUT)
+    logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
+    subprocess.check_output([ 'python3', 'make_paginated_json.py', '-d', '../data'], cwd=os.path.join(tempdir, 'edition/scripts/'), stderr=subprocess.STDOUT)
 
-        logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_call(['python3', 'add_html_to_paginated_json.py'], cwd=os.path.join(tempdir, 'edition/scripts/'))
+    logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
+    subprocess.check_call(['python3', 'add_html_to_paginated_json.py', '-d', '../data'], cwd=os.path.join(tempdir, 'edition/scripts/'))
 
-        logger.debug('{}: move edition/transcription/[dirname] to output/json'.format(current_task.request.id))
-        dirname = xml_filename.replace('.xml', '')
-        shutil.copytree(os.path.join(tempdir, 'edition/transcription/', dirname), os.path.join(tempdir, 'output/json'))
+    logger.debug('{}: move edition/transcription/[dirname] to output/json'.format(current_task.request.id))
+    dirname = xml_filename.replace('.xml', '')
+    shutil.copytree(os.path.join(tempdir, 'edition/data/transcription/', dirname), os.path.join(tempdir, 'output/json'))
 
-        logger.debug(os.listdir(os.path.join(tempdir, 'output/static/')))
+    logger.debug(os.listdir(os.path.join(tempdir, 'output/static/')))
 
-        shutil.copytree(os.path.join(settings.RESOURCES_LOCATION, 'deps'), os.path.join(tempdir, 'output/static/deps'))
-        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/static/'))
-        shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/static/'))
+    shutil.copytree(os.path.join(settings.RESOURCES_LOCATION, 'deps'), os.path.join(tempdir, 'output/static/deps'))
+    shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/static/'))
+    shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/static/'))
 
-        menu = json.loads(open(os.path.join(tempdir, 'edition/static/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
-        index_string = open(os.path.join(settings.RESOURCES_LOCATION, 'index.html')).read()
+    menu = json.loads(open(os.path.join(tempdir, 'edition/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
+    index_string = open(os.path.join(settings.RESOURCES_LOCATION, 'index.html')).read()
 
-        abbreviated_list = []
-        expanded_list = []
-        for file in menu[dirname]:
-            data = json.loads(open(os.path.join(tempdir, 'output/json', '{}.json'.format(file))).read());
-            abbreviated_list.append('<div class="panel-body" id="abbr-{}"><span class="page">{}</span>'.format(data['name'], data['name']))
-            abbreviated_list.append(data['html_abbrev'])
-            abbreviated_list.append('</div>')
+    abbreviated_list = []
+    expanded_list = []
+    for file in menu[dirname]:
+        data = json.loads(open(os.path.join(tempdir, 'output/json', '{}.json'.format(file))).read());
+        abbreviated_list.append('<div class="panel-body" id="abbr-{}"><span class="page">{}</span>'.format(data['name'], data['name']))
+        abbreviated_list.append(data['html_abbrev'])
+        abbreviated_list.append('</div>')
 
-            expanded_list.append('<div class="panel-body" id="abbr-{}"><span class="page">{}</span>'.format(data['name'], data['name']))
-            expanded_list.append(data['html'])
-            expanded_list.append('</div>')
+        expanded_list.append('<div class="panel-body" id="abbr-{}"><span class="page">{}</span>'.format(data['name'], data['name']))
+        expanded_list.append(data['html'])
+        expanded_list.append('</div>')
 
-        index_string = index_string.replace('%SGLM%', dirname)
-        index_string = index_string.replace('%ABBRVTD%', ''.join(abbreviated_list))
-        index_string = index_string.replace('%EXPNDD%', ''.join(expanded_list))
-        with open(os.path.join(tempdir, 'output/index.html'), 'w') as outfile:
-            outfile.write(index_string)
+    index_string = index_string.replace('%SGLM%', dirname)
+    index_string = index_string.replace('%ABBRVTD%', ''.join(abbreviated_list))
+    index_string = index_string.replace('%EXPNDD%', ''.join(expanded_list))
+    with open(os.path.join(tempdir, 'output/index.html'), 'w') as outfile:
+        outfile.write(index_string)
 
-        logger.debug('{}: zip up the result and copy to output location'.format(current_task.request.id))
-        zipname = re.sub('^' + tempfile.gettempdir() + '/', '', tempdir)
-        shutil.make_archive(os.path.join(settings.OUTPUT_LOCATION, zipname), 'zip', os.path.join(tempdir, 'output/'))
-    finally:
-        logger.debug('{}: delete the unneeded tmp folder'.format(current_task.request.id))
-        shutil.rmtree(tempdir)
+    logger.debug('{}: zip up the result and copy to output location'.format(current_task.request.id))
+    zipname = re.sub('^' + tempfile.gettempdir() + '/', '', tempdir)
+    shutil.make_archive(os.path.join(settings.OUTPUT_LOCATION, zipname), 'zip', os.path.join(tempdir, 'output/'))
+    # finally:
+    #     logger.debug('{}: delete the unneeded tmp folder'.format(current_task.request.id))
+    #     shutil.rmtree(tempdir)
 
     logger.info('{}: complete, so return the zip filename {}'.format(current_task.request.id, zipname))
     return '{0}.zip'.format(zipname)

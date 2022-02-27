@@ -36,15 +36,15 @@ def _upload_and_process_xml(request, celery_task, file_location, template, title
 
     elif request.POST.get('rebuild'):
         """
-        If we have a POST request and 'rebuild' in the request then we set off the relevant task 
-        and send the user to the job result page 
+        If we have a POST request and 'rebuild' in the request then we set off the relevant task
+        and send the user to the job result page
         """
         task = celery_task.delay()
         return HttpResponseRedirect('?job={}'.format(task.id))
 
     elif request.POST.get('upload'):
         """
-        If we have a POST request and 'upload' in the request then we handle the file upload form 
+        If we have a POST request and 'upload' in the request then we handle the file upload form
         """
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -75,7 +75,7 @@ def transcriptions(request):
     """
     transcriptions page, deals with file upload and allows the user to spawn off the update task
     """
-    return _upload_and_process_xml(request, estoria_xml, os.path.join(settings.ESTORIA_LOCATION, 'XML'),
+    return _upload_and_process_xml(request, estoria_xml, os.path.join(settings.ESTORIA_LOCATION, 'transcriptions', 'manuscripts'),
                                    'estoria_app/transcriptions.html', 'Transcriptions')
 
 
@@ -83,7 +83,7 @@ def readerxml(request):
     """
     reader xml page, deals with file upload and allows the user to spawn off the update task
     """
-    return _upload_and_process_xml(request, reader_xml, os.path.join(settings.ESTORIA_LOCATION, 'readerXML'),
+    return _upload_and_process_xml(request, reader_xml, os.path.join(settings.ESTORIA_LOCATION, 'transcriptions', 'readerXML'),
                                    'estoria_app/readerxml.html', 'ReaderXML')
 
 
@@ -110,7 +110,7 @@ def baking(request):
     elif request.POST.get('range') or request.POST.get('one'):
         """
         If we have a POST request and 'range' or 'one' is in the request then we check that the input is valid
-        If it is valid then we set off the bake_chapters task and send the user to the job result page 
+        If it is valid then we set off the bake_chapters task and send the user to the job result page
         """
         if request.POST.get('range'):
             if request.POST.get('start_chapter').isdigit():
@@ -154,8 +154,8 @@ def critical(request):
 
     elif request.POST.get('rebuildfirst'):
         """
-        If we have a POST request and 'rebuildfirst' in the request then we set off the critical_edition_first task 
-        and send the user to the job result page 
+        If we have a POST request and 'rebuildfirst' in the request then we set off the critical_edition_first task
+        and send the user to the job result page
         """
         if os.path.islink(os.path.join(settings.ESTORIA_LOCATION, 'edition/apparatus/collation')):
             task = critical_edition_first.delay()
@@ -165,11 +165,10 @@ def critical(request):
 
     elif request.POST.get('rebuildlast'):
         """
-        If we have a POST request and 'rebuildlast' in the request then we set off the critical_edition_last task 
-        and send the user to the job result page 
+        If we have a POST request and 'rebuildlast' in the request then we set off the critical_edition_last task
+        and send the user to the job result page
         """
         task = critical_edition_last.delay()
         return HttpResponseRedirect('?job={}'.format(task.id))
 
     return render(request, 'estoria_app/critical.html', {'message': message})
-
