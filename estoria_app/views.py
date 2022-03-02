@@ -87,7 +87,7 @@ def readerxml(request):
                                    'estoria_app/readerxml.html', 'ReaderXML')
 
 
-def baking(request):
+def apparatus(request):
     """
     baking - allows the user to select either a chapter to bake or a range of chapters
     """
@@ -134,8 +134,19 @@ def baking(request):
             message = 'There was a problem with the supplied chapters to bake!'
             form = RangeForm(request.POST)
 
-    return render(request, 'estoria_app/baking.html',
+    return render(request, 'estoria_app/app_list.html',
                   {'form': form, 'data': data, 'message': message, 'location': settings.BAKING_WEBPAGES_BASEURL})
+
+
+def chapter(request, chapter):
+        data = {'chapter': chapter,
+                'collations_path': os.path.join(settings.ESTORIA_EDITION_LOCATION, 'data', 'collation', 'approved')}
+        return render(request, 'estoria_app/chapter_check.html', data)
+
+def sentence(request, context):
+    data = {'context': context,
+            'collations_path': os.path.join(settings.ESTORIA_EDITION_LOCATION, 'data', 'collation', 'approved')}
+    return render(request, 'estoria_app/sentence_check.html', data)
 
 
 def critical(request):

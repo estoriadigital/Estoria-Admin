@@ -1,0 +1,47 @@
+{% extends "estoria_app/base.html" %}
+{% load static %}
+
+{% block head %}
+ {{ block.super }}
+ <script type="text/javascript" src="{% static 'estoria_app/js/jquery-1.11.3.min.js' %}"></script>
+ <script type="text/javascript" src="{% static 'estoria_app/js/handlebars-v4.0.5.js' %}"></script>
+ <script type="text/javascript" src="{% static 'estoria_app/js/loadjson.js' %}"></script>
+ <link rel="stylesheet" href="{% static 'estoria_app/css/estoria-critical.css' %}" type="text/css">
+ <script type="text/javascript" src="{% static 'estoria_app/js/main.js' %}" defer="defer"></script>
+
+{% endblock %}
+
+{% block content %}
+
+    <h1>Apparatus data for {{ context }}</h1>
+    <input type="hidden" id="context" value="{{ context }}"/>
+    <input type="hidden" id="collations_path" value="{{ collations_path }}"/>
+    <p>Very simple view. Just to check we are getting the right text.</p>
+    <p>Note, words are in the German numbering (words are even, spaces are odd).</p>
+    {% verbatim %}
+    <script id="some-template" type="text/x-handlebars-template">
+        {{#apparati}}
+        <p><strong>{{start}} to {{end}}</strong></p>
+        <table>
+        <thead>
+          <th>Witnesses</th>
+          <th>Text</th>
+        </thead>
+        <tbody>
+          {{#readings}}
+          <tr>
+            <td>{{witnesses}}</td>
+            <td>{{text}}</td>
+          </tr>
+          {{/readings}}
+        </tbody>
+      </table>
+        {{/apparati}}
+
+
+    </script>
+    {% endverbatim %}
+
+
+
+{% endblock %}

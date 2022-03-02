@@ -3,7 +3,7 @@ from celery import shared_task, current_task
 from django.conf import settings
 
 from selenium import webdriver
-from selenium.webdriver import FirefoxOptions
+# from selenium.webdriver import FirefoxOptions
 
 import subprocess
 import logging
@@ -58,7 +58,7 @@ def critical_edition_first():
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
 
     logger.debug('{}: run make_critical_chapter_verse_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_critical_chapter_verse_json.py'], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_critical_chapter_verse_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
 
     logger.debug('{}: run make_apparatus_index_page.py'.format(current_task.request.id))
     subprocess.check_call(['python', 'make_apparatus_index_page.py'], cwd=settings.SCRIPTS_LOCATION)
@@ -92,9 +92,9 @@ def bake_chapters(start, stop):
     logger.info('{}: bake_chapters task started'.format(current_task.request.id))
     logger.debug('{}: Baking chapters: {} to {}'.format(current_task.request.id, start, stop))
 
-    opts = FirefoxOptions()
-    opts.add_argument("--headless")
-    driver = webdriver.Firefox(firefox_options=opts)
+    # opts = FirefoxOptions()
+    # opts.add_argument("--headless")
+    driver = webdriver.Firefox()
 
     for i in range(start, stop+1):
         logger.debug('{}: Bake chapter: {}'.format(current_task.request.id, i))

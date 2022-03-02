@@ -8,6 +8,6 @@ from . import views
 urlpatterns = [
     path('', views.index, name='base'),
     path('xmlconversion/', include('xmlconversion_app.urls')),
-    path('estoria/', include('estoria_app.urls')),
+    path('estoria-admin/', include('estoria_app.urls')),
     path('poll_state', poll_state, name='poll_state'),
 ]

@@ -1,0 +1,52 @@
+@font-face {
+    font-family: 'Junicode';
+    font-style: normal;
+    font-weight: normal;
+    src: local("Junicode"),
+    url('/edition/static/junicode-woff/fonts/Junicode.woff') format('woff'),
+    url('/edition/static/junicode/Junicode.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Junicode';
+    font-style: normal;
+    font-weight: bold;
+    src: local("Junicode Bold"),
+    local("Junicode-Bold"),
+    url('/edition/static/junicode-woff/fonts/Junicode-Bold.woff') format('woff'),
+    url('/edition/static/junicode/Junicode-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Junicode';
+    font-style: italic;
+    font-weight: normal;
+    src: local("Junicode Italic"),
+    local("Junicode-Italic"),
+    url('/edition/static/junicode-woff/fonts/Junicode-Italic.woff') format('woff'),
+    url('/edition/static/junicode/Junicode-Italic.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Junicode';
+    font-style: italic;
+    font-weight: bold;
+    src: local("Junicode BoldItalic"),
+    local("Junicode-BoldItalic"),
+    url('/edition/static/junicode-woff/fonts/Junicode-BoldItalic.woff') format('woff'),
+    url('/edition/static/junicode/Junicode-BoldItalic.ttf') format('truetype');
+}
+.panel-body {
+    font-family: Junicode,"Helvetica Neue",Helvetica,Arial,sans-serif
+}
+span.hover {
+    color: RoyalBlue;
+}
+
+sub {
+    color: grey;
+}
+
+#verse-Rubric {
+    color: red;
+}

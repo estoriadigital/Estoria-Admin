@@ -1,0 +1,67 @@
+{% extends "estoria_app/base.html" %}
+{% load static %}
+
+{% block head %}
+ {{ block.super }}
+ <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+ <link href="{% static 'estoria_app/css/readereditor.css' %}" rel="stylesheet">
+ <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+ <script type="text/javascript" src="{% static 'estoria_app/js/handlebars-v4.0.5.js' %}"></script>
+ <script src="http://localhost:8080/data/collations.js"></script>
+ <script src="http://localhost:8080/data/page_chapter_index.js"></script>
+ <script src="{% static 'estoria_app/js/simpleeditor.js' %}"></script>
+ {% verbatim %}
+ <script id="overtext-template" type="text/x-handlebars-template">
+   <span id="verse-{{verse_num}}">
+     {{#each this.blocks}}
+     <span id="{{this.id}}" class="overtext">{{#if text}}{{#ifIn i ../real_variants }}⸂{{/ifIn}}{{text}}{{#ifIn i ../real_variants }}<span class="critical_marker">⸃</span>{{/ifIn}}{{else}}{{#ifIn i ../real_variants }}<span class="critical_marker">⸆</span>{{/ifIn}}{{/if}}</span>
+     {{/each}}
+     {{#if this.blocks.0.is_rubric}}<br />{{/if}}
+   </span>
+   </script>
+   <script id="variant-template" type="text/x-handlebars-template">
+     {{#each this}}
+     <span id="{{this.id}}" class="variant" data-base-witness="{{this.overtext_witnesses}}"><span class="base_counter" data-base-last-wit="{{this.last_wit}}" data-base-page-name="{{this.overtext_page_name}}">{{#if @index}}|{{/if}}</span> {{{this.formatted_witnesses}}}: {{#if this.text}}<span class="variant-wit-text">{{this.text}}</span>{{else}}<span class="variant-wit-text"><em>om</em></span>{{/if}}</span>
+     {{/each}}
+   </script>
+   <script id="apparatus-template" type="text/x-handlebars-template">
+     <p><strong>{{context}}</strong></p>
+       {{#each structure.apparatus as |block blockId|}}
+       <table>
+         {{#each block.readings as |reading readingId|}}
+         <tr>
+           <td>
+           {{#each reading.witnesses}}
+           {{this}}
+           {{/each}}
+           </td>
+           {{#each reading.text as |text textId|}}
+           <td>
+             {{text.interface}}
+           </td>
+             {{/each}}
+         </tr>
+         {{/each}}
+       </table><br />
+       {{/each}}
+   </script>
+       {% endverbatim %}
+{% endblock %}
+
+{% block content %}
+
+    <h1>Apparatus data for Chapter {{ chapter }}</h1>
+    <input type="hidden" id="chapter" value="{{ chapter }}"/>
+    <input type="hidden" id="collations_path" value="{{ collations_path }}"/>
+    <div class="container">
+      <div id="apparatus">
+      </div>
+      <br />
+      <label for="variants">Footnotes:</label>
+      <div id="variants">
+      </div>
+      <br />
+    </div>
+
+
+{% endblock %}
