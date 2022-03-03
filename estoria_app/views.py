@@ -1,4 +1,4 @@
-from .tasks import estoria_xml, reader_xml, critical_edition_first, critical_edition_last, bake_chapters
+from .tasks import estoria_xml, reader_xml, critical_edition_first, bake_chapters
 from djangoproject.forms import UploadFileForm, RangeForm
 from djangoproject.shared import validate_xml
 
@@ -173,13 +173,5 @@ def critical(request):
             return HttpResponseRedirect('?job={}'.format(task.id))
         else:
             message = 'There is a problem. The collation does not appear to exist.'
-
-    elif request.POST.get('rebuildlast'):
-        """
-        If we have a POST request and 'rebuildlast' in the request then we set off the critical_edition_last task
-        and send the user to the job result page
-        """
-        task = critical_edition_last.delay()
-        return HttpResponseRedirect('?job={}'.format(task.id))
 
     return render(request, 'estoria_app/critical.html', {'message': message})

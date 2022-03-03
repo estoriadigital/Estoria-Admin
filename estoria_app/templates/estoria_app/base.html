@@ -8,13 +8,14 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'style.css' %}" >
+        <script type="text/javascript" src="{% static 'estoria_app/js/jquery-3.6.1.min.js' %}"></script>
         <title>{{ page_title }}</title>
         {% endblock %}
     </head>
     <body>
 
     <div id="menu">
-        <a href="transcriptions">Transcriptions</a> | <a href="readerxml">Reader XML</a> | <a href="/estoria-admin/apparatus">Baking</a> | <a href="critical">Critical Edition</a>
+        <a href="/estoria-admin/transcriptions">Transcriptions</a> | <a href="/estoria-admin/readerxml">Reader XML</a> | <a href="/estoria-admin/apparatus">Baking</a> | <a href="/estoria-admin/critical">Critical Edition</a>
     </div>
 
     <div id="content">
