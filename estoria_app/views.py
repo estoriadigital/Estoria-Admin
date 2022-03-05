@@ -94,7 +94,7 @@ def apparatus(request):
     message = ''
     form = RangeForm()
 
-    with open(os.path.join(settings.ESTORIA_LOCATION, 'edition/apparatus/collations.json'), encoding='utf-8') as fp:
+    with open(os.path.join(settings.DATA_PATH, 'collations.json'), encoding='utf-8') as fp:
         data = json.load(fp, object_pairs_hook=collections.OrderedDict)
     maximum_chapter = int(next(reversed(data)))
 
@@ -168,7 +168,7 @@ def critical(request):
         If we have a POST request and 'rebuildfirst' in the request then we set off the critical_edition_first task
         and send the user to the job result page
         """
-        if os.path.islink(os.path.join(settings.ESTORIA_LOCATION, 'edition/apparatus/collation')):
+        if os.path.exists(os.path.join(settings.ESTORIA_LOCATION, 'collation', 'approved')):
             task = critical_edition_first.delay()
             return HttpResponseRedirect('?job={}'.format(task.id))
         else:

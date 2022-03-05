@@ -74,6 +74,10 @@ def bake_chapters(start, stop):
     """
     logger.info('{}: bake_chapters task started'.format(current_task.request.id))
     logger.debug('{}: Baking chapters: {} to {}'.format(current_task.request.id, start, stop))
+    try:
+        os.makedirs(os.path.join(settings.DATA_PATH, 'critical'))
+    except FileExistsError:
+        pass
 
     options = FirefoxOptions()
     options.add_argument("--headless")
