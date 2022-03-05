@@ -42,7 +42,7 @@ def xmlconversion(xml_filename, tempdir):
         logger.debug('{}: create directory structure'.format(current_task.request.id))
         os.makedirs(os.path.join(tempdir, 'transcriptions/manuscripts'))
         os.makedirs(os.path.join(tempdir, 'edition/static/data'))
-        os.makedirs(os.path.join(tempdir, 'edition/scripts'))
+        os.makedirs(os.path.join(tempdir, 'edition/src/assets/scripts'))
         os.makedirs(os.path.join(tempdir, 'output/static'))
 
         logger.debug('{}: add XML'.format(current_task.request.id))
@@ -50,25 +50,25 @@ def xmlconversion(xml_filename, tempdir):
 
         logger.debug('{}: copy over scripts'.format(current_task.request.id))
         shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'make_paginated_json.py'),
-                    os.path.join(tempdir, 'edition/scripts/'))
+                    os.path.join(tempdir, 'edition/src/assets/scripts/'))
         shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'add_html_to_paginated_json.py'),
-                    os.path.join(tempdir, 'edition/scripts/'))
+                    os.path.join(tempdir, 'edition/src/assets/scripts/'))
         # print(os.path.join(tempdir, 'edition/scripts/'))
         logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_output([ 'python3', 'make_paginated_json.py', '-d', '../data'], cwd=os.path.join(tempdir, 'edition/scripts/'), stderr=subprocess.STDOUT)
+        subprocess.check_output([ 'python3', 'make_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'), stderr=subprocess.STDOUT)
 
         logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_call(['python3', 'add_html_to_paginated_json.py', '-d', '../data'], cwd=os.path.join(tempdir, 'edition/scripts/'))
+        subprocess.check_call(['python3', 'add_html_to_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'))
 
         logger.debug('{}: move edition/transcription/[dirname] to output/json'.format(current_task.request.id))
         dirname = xml_filename.replace('.xml', '')
-        shutil.copytree(os.path.join(tempdir, 'edition/data/transcription/', dirname), os.path.join(tempdir, 'output/json'))
+        shutil.copytree(os.path.join(tempdir, 'edition/static/data/transcription/', dirname), os.path.join(tempdir, 'output/json'))
 
         shutil.copytree(os.path.join(settings.RESOURCES_LOCATION, 'deps'), os.path.join(tempdir, 'output/static/deps'))
         shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/static/'))
         shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/static/'))
 
-        menu = json.loads(open(os.path.join(tempdir, 'edition/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
+        menu = json.loads(open(os.path.join(tempdir, 'edition/static/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
         index_string = open(os.path.join(settings.RESOURCES_LOCATION, 'index.html')).read()
 
         abbreviated_list = []
