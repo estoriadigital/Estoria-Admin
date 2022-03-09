@@ -11,61 +11,91 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def estoria_xml():
+def estoria_xml(data_path, scripts_path):
     """
     update the Estoria site with the current transcription XML files
     """
     logger.info('{}: estoria_xml task started'.format(current_task.request.id))
-    logger.debug('{}: Estoria web location: {}'.format(current_task.request.id, settings.ESTORIA_LOCATION))
-    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
+    logger.debug('{}: Data path: {}'.format(current_task.request.id, data_path))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_paginated_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_paginated_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'add_html_to_paginated_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'add_html_to_paginated_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run make_chapter_index_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_chapter_index_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_chapter_index_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
 
 @shared_task
-def reader_xml():
+def reader_xml(data_path, scripts_path):
     """
     update the Estoria site with the current reader XML file
     """
     logger.info('{}: reader_xml task started'.format(current_task.request.id))
-    logger.debug('{}: Estoria web location: {}'.format(current_task.request.id, settings.ESTORIA_LOCATION))
-    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
+    logger.debug('{}: Data path: {}'.format(current_task.request.id, data_path))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_reader.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_reader.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_reader.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
 
 @shared_task
-def critical_edition_first():
+def translation_xml(data_path, scripts_path):
+    """
+    update the Estoria site with the current reader XML file
+    """
+    logger.info('{}: translation_xml task started'.format(current_task.request.id))
+    logger.debug('{}: Data path: {}'.format(current_task.request.id, data_path))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
+
+    logger.debug('{}: run make_translation.py'.format(current_task.request.id))
+    subprocess.check_call(['python', 'make_translation.py', '-d', data_path], cwd=scripts_path)
+
+    logger.info('{}: complete'.format(current_task.request.id))
+
+
+@shared_task
+def cpsf_critical_xml(data_path, scripts_path):
+    """
+    update the Estoria site with the current reader XML file
+    """
+    logger.info('{}: cpsf_critical_xml task started'.format(current_task.request.id))
+    logger.debug('{}: Data path: {}'.format(current_task.request.id, data_path))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
+
+    logger.debug('{}: run make_cpsf_critical.py'.format(current_task.request.id))
+    subprocess.check_call(['python', 'make_cpsf_critical.py', '-d', data_path], cwd=scripts_path)
+
+    logger.info('{}: complete'.format(current_task.request.id))
+
+
+@shared_task
+def critical_edition_first(data_path, scripts_path):
     """
     the first part of updating the critical edition
     """
     logger.info('{}: critical_edition_first task started'.format(current_task.request.id))
-    logger.debug('{}: Estoria web location: {}'.format(current_task.request.id, settings.ESTORIA_LOCATION))
-    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
+    logger.debug('{}: Data path: {}'.format(current_task.request.id, data_path))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_critical_chapter_verse_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_critical_chapter_verse_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_critical_chapter_verse_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run make_verse_page_index_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_verse_page_index_json.py', '-d', settings.DATA_PATH], cwd=settings.SCRIPTS_LOCATION)
+    subprocess.check_call(['python', 'make_verse_page_index_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
 
 @shared_task
-def bake_chapters(start, stop):
+def bake_chapters(start, stop, baking_url, data_path):
     """
     Use Selenium to get the live javascript rendered webpage and then save it
     requires a geckodriver to be somewhere in the PATH
@@ -75,20 +105,20 @@ def bake_chapters(start, stop):
     logger.info('{}: bake_chapters task started'.format(current_task.request.id))
     logger.debug('{}: Baking chapters: {} to {}'.format(current_task.request.id, start, stop))
     try:
-        os.makedirs(os.path.join(settings.DATA_PATH, 'critical'))
+        os.makedirs(os.path.join(data_path, 'critical'))
     except FileExistsError:
         pass
 
     options = FirefoxOptions()
-    options.add_argument("--headless")
+    # options.add_argument("--headless")
     driver = webdriver.Firefox(options=options)
 
     for i in range(start, stop+1):
-        logger.debug('{}: Bake chapter: {}'.format(current_task.request.id, i))
-        url = settings.BAKING_WEBPAGES_BASEURL + 'chapter/{}'.format(i)
+        logger.debug('{}: Bake chapter: {} at {}'.format(current_task.request.id, i, baking_url))
+        url = baking_url + '/chapter/{}'.format(i)
         driver.get(url)
         container = driver.find_element_by_class_name('container').get_attribute('innerHTML')
-        with open(os.path.join(settings.DATA_PATH, 'critical', str(i) + '.html'), 'w',
+        with open(os.path.join(data_path, 'critical', str(i) + '.html'), 'w',
                   encoding='utf-8') as f:
             f.write(container)
 

@@ -15,7 +15,18 @@
     <body>
 
     <div id="menu">
-        <a href="/estoria-admin/transcriptions">Transcriptions</a> | <a href="/estoria-admin/readerxml">Reader XML</a> | <a href="/estoria-admin/apparatus">Baking</a> | <a href="/estoria-admin/critical">Critical Edition</a>
+        <span>{{ current_project }}</span>
+        <input type="hidden" id="current_project" value="{{ current_project}}"/> |
+        <a href="/estoria-admin">Home</a> |
+        <a href="/estoria-admin/transcriptions">Transcriptions</a> |
+        <a href="/estoria-admin/readerxml">Reader XML</a> |
+        {% if current_project == 'cpsf-digital' %}
+          <a href="/estoria-admin/translation">Translation</a> |
+          <a href="/estoria-admin/cpsfcritical">CPSF Critical</a> |
+        {% endif %}
+        <a href="/estoria-admin/critical">Critical Edition</a> |
+        <a href="/estoria-admin/apparatus">Baking</a>
+
     </div>
 
     <div id="content">

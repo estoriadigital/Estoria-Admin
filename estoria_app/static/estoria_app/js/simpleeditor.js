@@ -27,10 +27,10 @@ var save_text = function () {
 };
 
 var get_params = function (search_string) {
-    var params, pairs, temp, i;
+    var params, pairs, temp;
     params = {};
     pairs = search_string.replace('?', '').split('&');
-    for (i = 0; i < pairs.length; i += 1) {
+    for (let i = 0; i < pairs.length; i += 1) {
 	   temp = pairs[i].split('=');
 	   params[temp[0]] = temp[1];
     }
@@ -64,7 +64,7 @@ var test_base_missing = function(page) {
 };
 
 
-var process_data = function (data, overtext_template, variant_template) {
+var process_data = function (data, overtext_template, variant_template, project) {
 
     var variants, output_readings, real_variants, context,
     verse_number_from_json, apparatus, arrayLength, i, readings,
@@ -78,15 +78,15 @@ var process_data = function (data, overtext_template, variant_template) {
     context = data.context;
     verse_number_from_json = context.split("S")[1];
     apparatus = data.structure.apparatus;
-    for (i = 0; i < apparatus.length; i+=1) {
+    for (let i = 0; i < apparatus.length; i+=1) {
         readings = apparatus[i].readings;
         overtext_witnesses = "";
-        for (j = 0; j < readings.length; j+=1) {
+        for (let j = 0; j < readings.length; j+=1) {
             reading = readings[j];
             witnesses = reading.witnesses;
             tokens = reading.text;
             reading_tokens = [];
-            for (k = 0; k < tokens.length; k+=1) {
+            for (let k = 0; k < tokens.length; k+=1) {
                 token = tokens[k];
                 reading_tokens.push(token['interface']);
             }
@@ -146,7 +146,7 @@ var process_data = function (data, overtext_template, variant_template) {
                 if (context.endsWith("Rubric")) {
                     context_key = 'D' + chapter_id_name + 'S100';
                 }
-                for (var m = 0; m < witnesses_length; m++) {
+                for (let m = 0; m < witnesses_length; m++) {
 
                     witness_name = witnesses[m];
                     if (witness_name.includes('-mod')) {
@@ -170,9 +170,11 @@ var process_data = function (data, overtext_template, variant_template) {
                     var last_over_wit = overtext_witnesses.split(' ')[1];
                     if (overtext_witnesses == "Base") {
                         last_over_wit = get_base_witness(chapter_id_name);
-                        //console.log("Hello1", chapter_id_name, overtext_witnesses, last_over_wit);
                     } else {
-                        //console.log("Hello2", overtext_witnesses, last_over_wit);
+                      if (project === 'cpsf-digital') {
+                        // always use E2 for cpsf edition
+                        last_over_wit = 'E2';
+                      }
                     }
                     var overtext_page_name = PAGE_CHAPTER_INDEX[last_over_wit][context_key];
                     var text_witnesses = witnesses.join(' ');
@@ -247,9 +249,10 @@ var process_data = function (data, overtext_template, variant_template) {
 };
 
 $(document).ready(function() {
-    var params;
+    var params, project;
     params = get_params(location.search);
     $('#context').html(document.getElementById('chapter').value);
+    project = document.getElementById('current_project').value;
 
     function sleepFor( sleepDuration ){
         var now = new Date().getTime();
@@ -289,7 +292,7 @@ $(document).ready(function() {
     }
 
     success_callback = function(data) {
-                process_data(data, overtext_template, variant_template);
+                process_data(data, overtext_template, variant_template, project);
             }
     for (verse_num = 0; verse_num < collation_length; verse_num+=1) {
         block_name = block_names[verse_num];

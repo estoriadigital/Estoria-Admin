@@ -4,3 +4,4 @@ db.sqlite3
 djangoproject/settings.py
 geckodriver.log
 htmlcov
+xmlconversion_output_files

@@ -31,9 +31,10 @@ def xmlconversion(xml_filename, tempdir):
     """
     xml processing script
     """
+    scripts_path = os.path.join(settings.ESTORIA_BASE_LOCATION, 'estoria-digital/edition/src/assets/scripts')
     # TODO consider hard coded paths in here and if any should be variables or constants
     logger.info('{}: xmlconversion task started'.format(current_task.request.id))
-    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, settings.SCRIPTS_LOCATION))
+    logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
     logger.debug('{}: Resources location: {}'.format(current_task.request.id, settings.RESOURCES_LOCATION))
     logger.debug('{}: Output location: {}'.format(current_task.request.id, settings.OUTPUT_LOCATION))
     logger.debug('{}: Temporary directory: {}'.format(current_task.request.id, tempdir))
@@ -49,9 +50,10 @@ def xmlconversion(xml_filename, tempdir):
         shutil.move(os.path.join(tempdir, xml_filename), os.path.join(tempdir, 'transcriptions/manuscripts/'))
 
         logger.debug('{}: copy over scripts'.format(current_task.request.id))
-        shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'make_paginated_json.py'),
+
+        shutil.copy(scripts_path, 'make_paginated_json.py',
                     os.path.join(tempdir, 'edition/src/assets/scripts/'))
-        shutil.copy(os.path.join(settings.SCRIPTS_LOCATION, 'add_html_to_paginated_json.py'),
+        shutil.copy(scripts_path, 'add_html_to_paginated_json.py',
                     os.path.join(tempdir, 'edition/src/assets/scripts/'))
         # print(os.path.join(tempdir, 'edition/scripts/'))
         logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))

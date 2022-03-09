@@ -5,8 +5,8 @@
  {{ block.super }}
  <link href="{% static 'estoria_app/css/readereditor.css' %}" rel="stylesheet">
  <script type="text/javascript" src="{% static 'estoria_app/js/handlebars-4.7.7.min.js' %}"></script>
- <script src="http://localhost:8080/data/collations.js"></script>
- <script src="http://localhost:8080/data/page_chapter_index.js"></script>
+ <script src="{{ edition_url }}/data/collations.js"></script>
+ <script src="{{ edition_url }}/data/page_chapter_index.js"></script>
  <script src="{% static 'estoria_app/js/simpleeditor.js' %}"></script>
  {% verbatim %}
  <script id="overtext-template" type="text/x-handlebars-template">
