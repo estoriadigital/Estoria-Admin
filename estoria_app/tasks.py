@@ -110,7 +110,7 @@ def bake_chapters(start, stop, baking_url, data_path):
         pass
 
     options = FirefoxOptions()
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
     driver = webdriver.Firefox(options=options)
 
     for i in range(start, stop+1):
