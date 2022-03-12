@@ -8,7 +8,7 @@ import logging
 import os
 
 logger = logging.getLogger(__name__)
-
+python_path = os.path.join(settings.VIRTUAL_ENV_PATH, 'bin', 'python3')
 
 @shared_task
 def estoria_xml(data_path, scripts_path):
@@ -20,13 +20,13 @@ def estoria_xml(data_path, scripts_path):
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_paginated_json.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_paginated_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'add_html_to_paginated_json.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'add_html_to_paginated_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run make_chapter_index_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_chapter_index_json.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_chapter_index_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
@@ -41,7 +41,7 @@ def reader_xml(data_path, scripts_path):
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_reader.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_reader.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_reader.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
@@ -56,7 +56,7 @@ def translation_xml(data_path, scripts_path):
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_translation.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_translation.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_translation.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
@@ -71,7 +71,7 @@ def cpsf_critical_xml(data_path, scripts_path):
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_cpsf_critical.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_cpsf_critical.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_cpsf_critical.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 
@@ -86,10 +86,10 @@ def critical_edition_first(data_path, scripts_path):
     logger.debug('{}: Scripts location: {}'.format(current_task.request.id, scripts_path))
 
     logger.debug('{}: run make_critical_chapter_verse_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_critical_chapter_verse_json.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_critical_chapter_verse_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.debug('{}: run make_verse_page_index_json.py'.format(current_task.request.id))
-    subprocess.check_call(['python', 'make_verse_page_index_json.py', '-d', data_path], cwd=scripts_path)
+    subprocess.check_call([python_path, 'make_verse_page_index_json.py', '-d', data_path], cwd=scripts_path)
 
     logger.info('{}: complete'.format(current_task.request.id))
 

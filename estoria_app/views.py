@@ -32,7 +32,7 @@ def _upload_and_process_xml(request, celery_task, file_location, template, title
         """
         task_id = request.GET['job']
         task = AsyncResult(task_id)
-        context = {'result': task.result, 'state': task.state, 'task_id': task_id, 'title': title}
+        context = {'result': task.result, 'state': task.state, 'task_id': task_id, 'title': title, 'current_project': request.session['project']}
         return render(request, 'estoria_app/show_result.html', context)
 
     elif request.POST.get('rebuild'):
