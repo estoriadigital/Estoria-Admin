@@ -57,10 +57,11 @@ def xmlconversion(xml_filename, tempdir):
                     os.path.join(tempdir, 'edition/src/assets/scripts/'))
         # print(os.path.join(tempdir, 'edition/scripts/'))
         logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_output([ 'python3', 'make_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'), stderr=subprocess.STDOUT)
+        python_path = os.path.join(settings.VIRTUAL_ENV_PATH, 'bin', 'python3')
+        subprocess.check_output([python_path, 'make_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'), stderr=subprocess.STDOUT)
 
         logger.debug('{}: run add_html_to_paginated_json.py'.format(current_task.request.id))
-        subprocess.check_call(['python3', 'add_html_to_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'))
+        subprocess.check_call([python_path, 'add_html_to_paginated_json.py', '-d', os.path.join(tempdir, 'edition/static/data')], cwd=os.path.join(tempdir, 'edition/src/assets/scripts/'))
 
         logger.debug('{}: move edition/transcription/[dirname] to output/json'.format(current_task.request.id))
         dirname = xml_filename.replace('.xml', '')
