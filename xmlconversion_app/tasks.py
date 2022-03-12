@@ -51,9 +51,9 @@ def xmlconversion(xml_filename, tempdir):
 
         logger.debug('{}: copy over scripts'.format(current_task.request.id))
 
-        shutil.copy(scripts_path, 'make_paginated_json.py',
+        shutil.copy(os.path.join(scripts_path, 'make_paginated_json.py'),
                     os.path.join(tempdir, 'edition/src/assets/scripts/'))
-        shutil.copy(scripts_path, 'add_html_to_paginated_json.py',
+        shutil.copy(os.path.join(scripts_path, 'add_html_to_paginated_json.py'),
                     os.path.join(tempdir, 'edition/src/assets/scripts/'))
         # print(os.path.join(tempdir, 'edition/scripts/'))
         logger.debug('{}: run make_paginated_json.py'.format(current_task.request.id))
