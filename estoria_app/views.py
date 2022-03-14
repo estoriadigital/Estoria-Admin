@@ -199,7 +199,7 @@ def apparatus(request):
                 start = stop = -1
 
         if 1 <= start <= stop <= maximum_chapter:
-            url = request.build_absolute_uri() + '/' + request.session['project']
+            url = request.build_absolute_uri().replace('/estoria-admin', '') + '/' + request.session['project']
             if request.session['project'] == 'estoria-digital':
                 data_path = settings.ESTORIA_DATA_PATH
             elif request.session['project'] == 'cpsf-digital':
