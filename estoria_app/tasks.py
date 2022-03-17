@@ -3,6 +3,8 @@ from celery import shared_task, current_task
 from django.conf import settings
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import subprocess
 import logging
 import os
@@ -117,6 +119,9 @@ def bake_chapters(start, stop, baking_url, data_path):
         logger.debug('{}: Bake chapter: {} at {}'.format(current_task.request.id, i, baking_url))
         url = baking_url + '/chapter/{}'.format(i)
         driver.get(url)
+        WebDriverWait(driver, 60).until(
+            EC.presence_of_element_located((By.ID, 'finished'))
+        )
         container = driver.find_element_by_class_name('container').get_attribute('innerHTML')
         with open(os.path.join(data_path, 'critical', str(i) + '.html'), 'w',
                   encoding='utf-8') as f:

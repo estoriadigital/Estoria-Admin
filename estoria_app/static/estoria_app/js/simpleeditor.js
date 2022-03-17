@@ -194,6 +194,7 @@ var process_data = function (data, overtext_template, variant_template, project)
         }
     }
 
+
     var verse_number_normalised;
     if (verse_number_from_json == "Rubric") {
         verse_number_normalised = "R";
@@ -305,5 +306,6 @@ $(document).ready(function() {
             success: success_callback
         });
     }
-    save_text();
+    $('body').append('<span id="finished"/>');
+    // save_text();
 });
