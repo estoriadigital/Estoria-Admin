@@ -13,19 +13,6 @@ import json
 logger = logging.getLogger(__name__)
 
 
-def replace_line(filename, linenum, text):
-    """
-    replace the specified line number with the supplied text
-    this sorts out the menus, without having to deal with how the user has named the file
-    """
-    with open(filename, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-    lines[linenum-1] = text
-    with open(filename, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
-
-
-
 @shared_task
 def xmlconversion(xml_filename, tempdir):
     """
@@ -66,10 +53,12 @@ def xmlconversion(xml_filename, tempdir):
         dirname = xml_filename.replace('.xml', '')
         shutil.copytree(os.path.join(tempdir, 'edition/static/data/transcription/', dirname), os.path.join(tempdir, 'output/json'))
 
+        logger.debug('{}: copy in the js/css/font packages to output'.format(current_task.request.id))
         shutil.copytree(os.path.join(settings.RESOURCES_LOCATION, 'deps'), os.path.join(tempdir, 'output/static/deps'))
         shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.js'), os.path.join(tempdir, 'output/static/'))
         shutil.copy(os.path.join(settings.RESOURCES_LOCATION, 'estoria.css'), os.path.join(tempdir, 'output/static/'))
 
+        logger.debug('{}: build html from generated json files'.format(current_task.request.id))
         menu = json.loads(open(os.path.join(tempdir, 'edition/static/data/menu_data.js')).read().replace('MENU_DATA = ', ''))
         index_string = open(os.path.join(settings.RESOURCES_LOCATION, 'index.html')).read()
 

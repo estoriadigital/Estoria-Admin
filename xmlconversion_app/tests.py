@@ -1,4 +1,4 @@
-from .tasks import xmlconversion, replace_line
+from .tasks import xmlconversion
 from .apps import XmlconversionAppConfig
 
 from django.apps import apps
@@ -31,6 +31,7 @@ class TestXmlconversion(TestCase):
     Test Celery tasks
     """
     @patch('subprocess.check_call')
+    @patch('subprocess.check_output')
     @patch('os.makedirs')
     @patch('shutil.move')
     @patch('shutil.copytree')
@@ -39,11 +40,10 @@ class TestXmlconversion(TestCase):
     @patch('json.loads')
     @patch('shutil.rmtree')
     @patch('shutil.make_archive')
-    @patch('xmlconversion_app.tasks.replace_line')
     @log_capture('xmlconversion_app.tasks')
-    def test_xmlconversion_run_task(self, mocked_check_call, mocked_makedirs, mocked_move,
-                                    mocked_copytree, mocked_copy, mocked_open, mocked_json_loads, mocked_rmtree,
-                                    mocked_make_archive, mocked_replace_line, capture):
+    def test_xmlconversion_run_task(self, capture, mocked_make_archive, mocked_rmtree, mocked_json_loads,
+                                    mocked_open, mocked_copy, mocked_copytree, mocked_move,
+                                    mocked_makedirs, mocked_check_output, mocked_check_call):
         """
         Test the xmlconversion task
         A pile of functions are mocked
@@ -52,19 +52,20 @@ class TestXmlconversion(TestCase):
         self.results = self.task.get()
         self.assertEqual(self.task.state, 'SUCCESS')
         self.assertTrue(mocked_check_call.called)
-        #self.assertTrue(mocked_check_output.called)
+        self.assertTrue(mocked_check_output.called)
         self.assertTrue(mocked_makedirs.called)
         self.assertTrue(mocked_move.called)
         self.assertTrue(mocked_copytree.called)
         self.assertTrue(mocked_copy.called)
         self.assertTrue(mocked_rmtree.called)
         self.assertTrue(mocked_make_archive.called)
-        self.assertTrue(mocked_replace_line.called)
 
         capture.check(
             ('xmlconversion_app.tasks', 'INFO', '{}: xmlconversion task started'.format(self.task.id)),
             ('xmlconversion_app.tasks', 'DEBUG',
-             '{}: Scripts location: {}'.format(self.task.id, os.path.join(settings.ESTORIA_BASE_LOCATION, 'estoria-digital/edition/src/assets/scripts'))),
+             '{}: Scripts location: {}'.format(self.task.id, os.path.join(settings.ESTORIA_BASE_LOCATION,
+                                                                          'estoria-digital/edition/src/assets/scripts')
+                                                                          )),
             ('xmlconversion_app.tasks', 'DEBUG',
              '{}: Resources location: {}'.format(self.task.id, settings.RESOURCES_LOCATION)),
             ('xmlconversion_app.tasks', 'DEBUG',
@@ -79,28 +80,13 @@ class TestXmlconversion(TestCase):
             ('xmlconversion_app.tasks', 'DEBUG',
              '{}: move edition/transcription/[dirname] to output/json'.format(self.task.id)),
             ('xmlconversion_app.tasks', 'DEBUG', '{}: copy in the js/css/font packages to output'.format(self.task.id)),
-            ('xmlconversion_app.tasks', 'DEBUG',
-             '{}: move edition/static/data/menu_data.js to '
-             'output/static/js/data_menu.js and edit the second line'.format(self.task.id)),
+            ('xmlconversion_app.tasks', 'DEBUG', '{}: build html from generated json files'.format(self.task.id)),
             ('xmlconversion_app.tasks', 'DEBUG',
              '{}: zip up the result and copy to output location'.format(self.task.id)),
             ('xmlconversion_app.tasks', 'DEBUG', '{}: delete the unneeded tmp folder'.format(self.task.id)),
             ('xmlconversion_app.tasks', 'INFO',
              '{}: complete, so return the zip filename {}'.format(self.task.id, re.sub('^/tmp/', '', 'tmp'))),
         )
-
-    def test_replace_line(self):
-        """
-        Test the replace_line function
-        Provide a temporary file, replace a line in it
-        """
-        with tempfile.NamedTemporaryFile('w', delete=False) as tfile:
-            tfile.write('line one\nline two\nline three')
-        replace_line(tfile.name, 2, 'new line two\n')
-        with open(tfile.name) as tfile:
-            filecontents = tfile.read()
-        self.assertEqual(filecontents, 'line one\nnew line two\nline three')
-        os.remove(tfile.name)
 
 
 class TestIndexView(TestCase):

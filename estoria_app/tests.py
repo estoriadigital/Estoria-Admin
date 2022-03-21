@@ -35,7 +35,7 @@ class Test1EstoriaXml(TestCase):
     """
     @log_capture('estoria_app.tasks')
     @patch('subprocess.check_call', side_effect=mocked_check_call)
-    def test_estoria_xml_run_task(self, capture, mocked_check_call):
+    def test_estoria_xml_run_task(self, mocked_check_call, capture):
         """
         test the estoria_xml Celery task
         """
@@ -66,7 +66,7 @@ class Test2ReaderXml(TestCase):
     """
     @log_capture('estoria_app.tasks')
     @patch('subprocess.check_call', side_effect=mocked_check_call)
-    def test_reader_xml_run_task(self, capture, mocked_check_call):
+    def test_reader_xml_run_task(self, mocked_check_call, capture):
         """
         Test reader_xml Celery task
         """
@@ -95,7 +95,7 @@ class Test3CriticalEditionFirst(TestCase):
     """
     @log_capture('estoria_app.tasks')
     @patch('subprocess.check_call', side_effect=mocked_check_call)
-    def test_critical_edition_first_run_task(self, capture, mocked_check_call):
+    def test_critical_edition_first_run_task(self, mocked_check_call, capture):
         """
         Test test_critical_edition_first_run_task Celery task
         """
@@ -114,7 +114,7 @@ class Test3CriticalEditionFirst(TestCase):
                                                         os.path.join(settings.ESTORIA_BASE_LOCATION,
                                                                      'estoria-digital/editions/src/assets/scripts'))),
             ('estoria_app.tasks', 'DEBUG', '{}: run make_critical_chapter_verse_json.py'.format(self.task.id)),
-            ('estoria_app.tasks', 'DEBUG', '{}: run make_apparatus_index_page.py'.format(self.task.id)),
+            ('estoria_app.tasks', 'DEBUG', '{}: run make_verse_page_index_json.py'.format(self.task.id)),
             ('estoria_app.tasks', 'INFO', '{}: complete'.format(self.task.id)),
         )
 
@@ -142,33 +142,10 @@ class Test4BakeChapters(TestCase):
         capture.check(
             ('estoria_app.tasks', 'INFO', '{}: bake_chapters task started'.format(self.task.id)),
             ('estoria_app.tasks', 'DEBUG', '{}: Baking chapters: 101 to 101'.format(self.task.id)),
-            ('estoria_app.tasks', 'DEBUG', '{}: Bake chapter: 101'.format(self.task.id)),
+            ('estoria_app.tasks', 'DEBUG', '{}: Bake chapter: 101 at {}'.format(self.task.id, baking_url)),
             ('estoria_app.tasks', 'INFO', '{}: complete'.format(self.task.id)),
         )
 
-
-# class Test5CriticalEditionLast(TestCase):
-#     """
-#     Test critical_edition_last Celery task
-#     """
-#     @log_capture('estoria_app.tasks')
-#     @patch('subprocess.check_call', side_effect=mocked_check_call)
-#     def test_critical_edition_last_run_task(self, capture):
-#         """
-#         Test critical_edition_last Celery task
-#         """
-#         self.task = critical_edition_last.apply()
-#         self.results = self.task.get()
-#         self.assertEqual(self.task.state, 'SUCCESS')
-#
-#         capture.check(
-#             ('estoria_app.tasks', 'INFO', '{}: critical_edition_last task started'.format(self.task.id)),
-#             ('estoria_app.tasks', 'DEBUG',
-#              '{}: Estoria web location: {}'.format(self.task.id, settings.ESTORIA_LOCATION)),
-#             ('estoria_app.tasks', 'DEBUG', '{}: Scripts location: {}'.format(self.task.id, settings.SCRIPTS_LOCATION)),
-#             ('estoria_app.tasks', 'DEBUG', '{}: run make_chapter_index_json.py'.format(self.task.id)),
-#             ('estoria_app.tasks', 'INFO', '{}: complete'.format(self.task.id)),
-#         )
 
 
 class TestIndexView(TestCase):
@@ -678,23 +655,12 @@ class TestCriticalView(TestCase):
         session = self.client.session
         session['project'] = 'estoria-digital'
         session.save()
-        estoria_location = settings.ESTORIA_DATA_PATH
-        settings.ESTORIA_DATA_PATH = 'this_does_not_exist'
+        estoria_location = settings.ESTORIA_BASE_LOCATION
+        settings.ESTORIA_BASE_LOCATION = 'this_does_not_exist'
         url = reverse('critical')
         response = self.client.post(url, {'rebuildfirst': 'Rebuild First Part'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h1>Critical Edition</h1>')
         self.assertContains(response, '<form method="post">')
         self.assertEqual(response.context['message'], 'There is a problem. The collation does not appear to exist.')
-        settings.ESTORIA_DATA_PATH = estoria_location
-
-    # @patch('estoria_app.tasks.critical_edition_last.delay')
-    # def test_critical_rebuild_last_post(self, mocked_task):
-    #     """
-    #     'rebuildlast' POST request of the critical edition page
-    #     should set off the task and push the user to the job status page
-    #     """
-    #     url = reverse('critical')
-    #     response = self.client.post(url, {'rebuildlast': 'Rebuild Last Part'})
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertTrue(response['Location'].startswith('?job='))
+        settings.ESTORIA_BASE_LOCATION = estoria_location
