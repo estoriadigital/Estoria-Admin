@@ -1,17 +1,32 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        {% load static %}
+        {% block head %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'style.css' %}" >
-        <title></title>
+        <script type="text/javascript" src="{% static 'estoria_app/js/jquery-3.6.1.min.js' %}"></script>
+        <title>{{ page_title }}</title>
+        {% endblock %}
     </head>
     <body>
 
     <div id="menu">
-        <a href="transcriptions">Transcriptions</a> | <a href="readerxml">Reader XML</a> | <a href="baking">Baking</a> | <a href="critical">Critical Edition</a>
+        <span>{{ current_project }}</span>
+        <input type="hidden" id="current_project" value="{{ current_project}}"/> |
+        <a href="/estoria-admin">Home</a> |
+        <a href="/estoria-admin/transcriptions">Transcriptions</a> |
+        <a href="/estoria-admin/readerxml">Reader XML</a> |
+        {% if current_project == 'cpsf-digital' %}
+          <a href="/estoria-admin/translation">Translation</a> |
+          <a href="/estoria-admin/cpsfcritical">CPSF Critical</a> |
+        {% endif %}
+        <a href="/estoria-admin/critical">Critical Edition</a> |
+        <a href="/estoria-admin/apparatus">Baking</a>
+
     </div>
 
     <div id="content">

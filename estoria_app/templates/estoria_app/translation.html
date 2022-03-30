@@ -1,0 +1,24 @@
+{% extends "estoria_app/base.html" %}
+
+{% block content %}
+
+    <h1>Translation</h1>
+    <p>{{ message }}</p>
+    <p>Upload replacement translation file here (filename must be 'translation.xml').</p>
+    <p>Once you have successfully uploaded the file click 'Rebuild' to start off generation of the new pages.</p>
+
+    <h2>Upload file</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p class="error">{{ form.non_field_errors }}</p>
+        <p class="error">{{ form.xmlfile.errors }}</p>
+        <p>{{ form.xmlfile.label_tag }} {{ form.xmlfile }} <input name="upload" type="submit" value="Upload"/></p>
+    </form>
+
+    <h2>Rebuild</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p><input name="rebuild" type="submit" value="Rebuild"/></p>
+    </form>
+
+{% endblock content %}

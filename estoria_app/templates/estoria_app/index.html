@@ -2,7 +2,25 @@
 
 {% block content %}
 
-    <h1>Estoria</h1>
-    <p>Management tools for the Estoria website.</p>
+    {% if current_project %}
+      <h1>Admin tools for {{ current_project }}</h1>
+      <p>Management tools for the website.</p>
+      <p>You are currently working in the {{ current_project }} project.</p>
+
+      <h2>Change current project</h2>
+
+    {% else %}
+      <h1>Select project</h1>
+    {% endif %}
+
+    <form action="/estoria-admin/" method="post">
+			{% csrf_token %}
+			<label for="">Project select: </label>
+			<select name="project" id="project">
+				<option value='estoria-digital'>estoria-digital</option>
+        <option value='cpsf-digital'>cpsf-digital</option>
+			</select>
+			<input id="project_select_submit" type="submit" value="Select project" />
+		</form>
 
 {% endblock content %}

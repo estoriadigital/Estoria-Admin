@@ -19,7 +19,7 @@
     <h2>Edition Index</h2>
         {% for chapter, verses in data.items %}
             <p>
-                <strong>{{ chapter }}</strong> | (<a href="{{ location }}chapter/?chapter={{ chapter }}">whole chapter</a>)
+                <strong>{{ chapter }}</strong> | (<a href="/estoria-admin/apparatus/chapter/{{ chapter }}">whole chapter</a>)
                 <form method="post">
                     {% csrf_token %}
                     <input name="chapter" type="hidden" value="{{ chapter }}"/>
@@ -28,7 +28,7 @@
             </p>
             <ul>
                 {% for verse in verses %}
-                    <li>{{ verse }} | <a href="{{ location }}?context=D{{ chapter }}S{{ verse }}">Critical Edition</a> </li>
+                    <li>{{ verse }} | <a href="/estoria-admin/apparatus/D{{ chapter }}S{{ verse }}">Critical Edition</a> </li>
                 {% endfor %}
             </ul>
         {% endfor %}
