@@ -8,11 +8,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # file locations - see explanation in the README file
-SCRIPTS_LOCATION = os.path.join(BASE_DIR, '')
 RESOURCES_LOCATION = os.path.join(BASE_DIR, '')
 OUTPUT_LOCATION = os.path.join(BASE_DIR, '')
-ESTORIA_LOCATION = os.path.join(BASE_DIR, '')
-BAKING_WEBPAGES_BASEURL = ''
+ESTORIA_DATA_PATH = ''
+CPSF_DATA_PATH = ''
+ESTORIA_BASE_LOCATION = ''
+VIRTUAL_ENV_PATH = ''
+
+# urls
+ESTORIA_EDITION_LOCATION = ''
+CPSF_EDITION_LOCATION = ''
+ADMIN_TOOLS_LOCATION = ''
 
 
 # Quick-start development settings - unsuitable for production
